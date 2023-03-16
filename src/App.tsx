@@ -1,24 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useRef, useState } from 'react';
 import './App.css';
 
 function App() {
+  const counterRef = useRef(null);
+  const [history, setHistory] = useState<{ x: number, y: number}[]>([])
+  const [isCounterOn, setIsCounterOn] = useState(false);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div ref={counterRef}  onMouseMove={(e)=> {
+        const position = { x: e.clientX, y: e.clientY };
+        const size = 500;
+        const isPositionNotNullAndInsideCurrentRef = position.x <= size && position.x !== null &&  position.y <= size && position.y !== null;
+        if(isCounterOn && isPositionNotNullAndInsideCurrentRef){
+            setHistory([...history, { x: e.clientX, y: e.clientY} ])
+        }  
+      }} onClick={() => {
+        if(!isCounterOn){
+          setHistory([])
+        }
+        setIsCounterOn(!isCounterOn)
+      }} style={{width:500, height:500, backgroundColor: "#fcdcdc"}}
+      ></div>
+      isOn {isCounterOn + ''} {history.length}
+    <br/>
+      {!isCounterOn && history.map((pos) => <div><span>{pos.x}</span> <span>{pos.y}</span></div>)}
     </div>
   );
 }
